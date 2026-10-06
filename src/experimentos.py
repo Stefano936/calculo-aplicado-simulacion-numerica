@@ -1,4 +1,4 @@
-"""Única fuente de simulaciones para CSV, notebook e informe."""
+"""Simulaciones y exportación reproducible de CSV y figuras."""
 from pathlib import Path
 import numpy as np
 import pandas as pd

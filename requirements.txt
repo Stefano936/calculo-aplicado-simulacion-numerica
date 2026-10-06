@@ -1,4 +1,4 @@
-# Python 3.12; dependencias de simulación y pruebas.
+# Python 3.12; dependencias para todos los experimentos y las pruebas.
 numpy==2.5.3
 pandas==3.0.1
 matplotlib==3.11.2

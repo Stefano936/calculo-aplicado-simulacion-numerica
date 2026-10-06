@@ -34,12 +34,6 @@ Instalación para experimentos y pruebas:
 python -m pip install -r requirements.txt
 ```
 
-Para ejecutar y abrir el notebook, instalar además:
-
-```console
-python -m pip install -r requirements-notebook.txt
-```
-
 Si PowerShell impide activar el entorno, usar directamente
 `.\.venv\Scripts\python.exe` en lugar de `python` en los comandos siguientes.
 
@@ -57,26 +51,12 @@ cada una en PNG de 240 dpi y PDF vectorial, en `resultados/figuras/`.
 Estas carpetas se regeneran y están excluidas de Git. Cada ejecución
 sobrescribe los resultados con los mismos nombres.
 
-Para generar resultados, ejecutar pruebas y recrear el notebook desde un kernel nuevo:
+Para ejecutar todos los experimentos, generar los CSV y las figuras y
+ejecutar las pruebas con un único comando:
 
 ```console
 python -m src.generar_entregables
 ```
-
-Sin dependencias de notebook:
-
-```console
-python -m src.generar_entregables --sin-notebook
-```
-
-Para abrir el notebook:
-
-```console
-python -m jupyterlab notebooks/proyecto_calculo.ipynb
-```
-
-Ejecutar todas las celdas en orden. El notebook importa los módulos del proyecto
-y regenera las tablas y figuras; no necesita resultados preexistentes.
 
 ## Organización y verificaciones
 
@@ -84,7 +64,7 @@ y regenera las tablas y figuras; no necesita resultados preexistentes.
 - `src/metricas.py`: errores, resumen y consultas de nodos tolerantes al punto flotante.
 - `src/experimentos.py`: experimentos separados y exportación de datos sin redondeo previo.
 - `src/visualizacion.py`: configuración y exportación de figuras.
-- `src/notebook.py`: creación y ejecución del notebook.
+- `src/generar_entregables.py`: ejecución completa y comprobaciones.
 - `tests/`: fórmulas independientes, contratos, convergencia y parámetros de experimentos.
 
 Las pruebas generan datos en una carpeta temporal, por lo que funcionan también

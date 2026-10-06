@@ -4,7 +4,6 @@ env/
 __pycache__/
 *.py[cod]
 .pytest_cache/
-.ipynb_checkpoints/
 .build/
 work/
 tmp/
