@@ -1,0 +1,5 @@
+* text=auto eol=lf
+# Conservar bytes de CSV para que el manifiesto sea válido al descargar.
+*.csv -text
+*.pdf binary
+*.png binary

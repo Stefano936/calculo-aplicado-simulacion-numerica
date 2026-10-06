@@ -1,0 +1,14 @@
+\begin{table}[H]\centering\small\setlength{\tabcolsep}{4pt}
+\caption{Euler para $x^{\prime}=-x$ en $[0,10]$: errores absolutos y costo.}\label{tab:error}
+\begin{tabular}{llllll}
+\toprule
+$h$ & Pasos & $x_N$ & $E_f$ & $E_{\max}$ & Eval. $f$\\
+\midrule
+1 & 10 & 0 & $4.53999\times 10^{-5}$ & 0.367879 & 10\\
+0.5 & 20 & $9.53674\times 10^{-7}$ & $4.44463\times 10^{-5}$ & 0.117879 & 20\\
+0.1 & 100 & $2.65614\times 10^{-5}$ & $1.88385\times 10^{-5}$ & 0.019201 & 100\\
+0.05 & 200 & $3.50527\times 10^{-5}$ & $1.03473\times 10^{-5}$ & 0.009394 & 200\\
+0.01 & 1000 & $4.31712\times 10^{-5}$ & $2.22868\times 10^{-6}$ & 0.001847 & 1000\\
+\bottomrule\end{tabular}
+\end{table}
+{\footnotesize Nota. $h$: unidades de tiempo. $x$ y errores sin unidad definida. Eval. $f$: llamadas a la función; valores sin redondeo previo.}

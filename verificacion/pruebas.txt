@@ -1,0 +1,20 @@
+test_combinaciones (test_experimentos.Cobertura.test_combinaciones) ... ok
+test_convergencia_y_costo (test_experimentos.Cobertura.test_convergencia_y_costo) ... ok
+test_h_uno_metricas (test_experimentos.Cobertura.test_h_uno_metricas) ... ok
+test_metricas_trayectorias (test_experimentos.Cobertura.test_metricas_trayectorias) ... ok
+test_contrato (test_metodos.Propiedades.test_contrato) ... ok
+test_dependencia_t_y_ultimo_paso (test_metodos.Propiedades.test_dependencia_t_y_ultimo_paso) ... ok
+test_equilibrio_extendido (test_metodos.Propiedades.test_equilibrio_extendido) ... ok
+test_evaluaciones (test_metodos.Propiedades.test_evaluaciones) ... ok
+test_geometricas (test_metodos.Propiedades.test_geometricas) ... ok
+test_invalidos (test_metodos.Propiedades.test_invalidos) ... ok
+test_lineal (test_metodos.Propiedades.test_lineal) ... ok
+test_negativos_y_regimenes (test_metodos.Propiedades.test_negativos_y_regimenes) ... ok
+test_nodos (test_metodos.Propiedades.test_nodos) ... ok
+test_orden_convergencia (test_metodos.Propiedades.test_orden_convergencia) ... ok
+test_vulnerabilidades (test_metodos.Propiedades.test_vulnerabilidades) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 0.212s
+
+OK

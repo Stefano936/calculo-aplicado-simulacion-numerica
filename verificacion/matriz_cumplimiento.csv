@@ -1,0 +1,102 @@
+﻿Documento,Requisito,Implementación o evidencia,Ubicación real del resultado,Estado
+Consigna: Actividad 1 (p.3),Función Euler: entradas y tres salidas,Simulaciones ejecutadas y análisis en el cuerpo,"src/metodos.py; tests/test_metodos.py; informe §2.2, §3.3",Verificado
+Consigna: Caso lineal (p.4),"Tres pasos, referencia, gráfica, comparación y efecto de h",Simulaciones ejecutadas y análisis en el cuerpo,resultados/tablas/lineal.csv; Figura 1; Tabla 1; informe §5.1,Verificado
+Consigna: Caso exponencial (pp.4-5),"Cuatro pasos y referencia en una figura, diferencias",Simulaciones ejecutadas y análisis en el cuerpo,"Figura 2; informe §4.2, §5.1; resultados/tablas/trayectorias.csv",Verificado
+Consigna: Actividad 2 (p.5),"Cinco pasos, tabla de error y gráfica En",Simulaciones ejecutadas y análisis en el cuerpo,Tabla 2; Figura 3; resultados/tablas/error.csv,Verificado
+Consigna: Actividad 3 (p.6),"Heun exacto de la consigna, seis comparaciones",Simulaciones ejecutadas y análisis en el cuerpo,"src/metodos.py; Tabla 3; informe §2.2, §5.2",Verificado
+Consigna: Actividad 4 (pp.7-8),"Nueve escenarios, 27 observaciones, errores y referencias",Simulaciones ejecutadas y análisis en el cuerpo,Tablas 5-6; Figuras 4-7; resultados/tablas/vulnerabilidades.csv,Verificado
+Consigna: Actividad 5 (p.9),Sucesión y cinco regímenes completos,Simulaciones ejecutadas y análisis en el cuerpo,"Tabla 8; Figura 9; informe §2.4, §5.4",Verificado
+Consigna: Actividad 6 (pp.9-10),"Cuatro tasas, gráfica, comparación y equilibrio",Simulaciones ejecutadas y análisis en el cuerpo,"Tabla 7; Figura 8; informe §4.5, §5.5",Verificado
+Consigna: Caso lineal,Efecto de disminuir h,Respuesta integrada con razonamiento y resultados,informe §5.1,Verificado
+Consigna: Actividad 2,1. Error al disminuir h,Respuesta integrada con razonamiento y resultados,informe §5.1; Tabla 2,Verificado
+Consigna: Actividad 2,2. Número de iteraciones,Respuesta integrada con razonamiento y resultados,informe §5.1; Tabla 2,Verificado
+Consigna: Actividad 2,3. Compromiso precisión y costo,Respuesta integrada con razonamiento y resultados,"informe §5.1, §5.8",Verificado
+Consigna: Actividad 2,4. ¿Siempre conviene menor paso?,Respuesta integrada con razonamiento y resultados,"informe §5.1, §5.8",Verificado
+Consigna: Actividad 3,1. Menor error por métrica,Respuesta integrada con razonamiento y resultados,informe §5.2; Tabla 3,Verificado
+Consigna: Actividad 3,2. Dependencia del paso,Respuesta integrada con razonamiento y resultados,informe §5.2; Tabla 4,Verificado
+Consigna: Actividad 3,3. Operaciones por iteración,Respuesta integrada con razonamiento y resultados,"informe §2.2, §3.3, §5.2",Verificado
+Consigna: Actividad 3,4. Precisión y conveniencia,Respuesta integrada con razonamiento y resultados,"informe §5.2, §5.8",Verificado
+Consigna: Interpretación 8.2,1. Significado de k,Respuesta integrada con razonamiento y resultados,"informe §2.4, §5.3",Verificado
+Consigna: Interpretación 8.2,2. Organización más rápida,Respuesta integrada con razonamiento y resultados,informe §5.3; Tablas 5-6,Verificado
+Consigna: Interpretación 8.2,3. Trayectoria al aumentar k,Respuesta integrada con razonamiento y resultados,informe §5.3; Figura 4,Verificado
+Consigna: Interpretación 8.2,4. k alto y capacidad de respuesta,Respuesta integrada con razonamiento y resultados,informe §5.3,Verificado
+Consigna: Interpretación 8.2,5. Factores reales de diferencias,Respuesta integrada con razonamiento y resultados,informe §5.3,Verificado
+Consigna: Actividad 5,1. Tipo de sucesión,Respuesta integrada con razonamiento y resultados,"informe §2.4, §5.4",Verificado
+Consigna: Actividad 5,2. Expresión explícita,Respuesta integrada con razonamiento y resultados,informe §2.4 ecuación 7,Verificado
+Consigna: Actividad 5,3. Límite,Respuesta integrada con razonamiento y resultados,informe §5.4; Tabla 8,Verificado
+Consigna: Actividad 5,4. Sentido físico según hk,Respuesta integrada con razonamiento y resultados,informe §5.4; Tabla 8,Verificado
+Consigna: Actividad 5,5. Qué ocurre con hk>1,Respuesta integrada con razonamiento y resultados,informe §5.4; Figura 9,Verificado
+Consigna: Actividad 5,6. Valores negativos,Respuesta integrada con razonamiento y resultados,informe §5.4; tests/test_metodos.py,Verificado
+Consigna: Actividad 5,7. Interpretación de cantidad negativa,Respuesta integrada con razonamiento y resultados,informe §5.4,Verificado
+Consigna: Actividad 6,1. Simular cuatro casos,Respuesta integrada con razonamiento y resultados,informe §4.5; Tabla 7,Verificado
+Consigna: Actividad 6,2. Graficar,Respuesta integrada con razonamiento y resultados,informe Figura 8,Verificado
+Consigna: Actividad 6,3. Comparar resultados,Respuesta integrada con razonamiento y resultados,"informe §4.5, §5.5",Verificado
+Consigna: Actividad 6,4. Disminuir crecer estabilizarse,Respuesta integrada con razonamiento y resultados,informe §5.5,Verificado
+Consigna: Actividad 6,5. Organización real,Respuesta integrada con razonamiento y resultados,"informe §5.5, §5.7",Verificado
+Consigna: T1190,1. En qué consiste,Respuesta integrada con razonamiento y resultados,"informe §2.5, §5.6",Verificado
+Consigna: T1190,2. Sistemas vulnerables,Respuesta integrada con razonamiento y resultados,informe §5.6,Verificado
+Consigna: T1190,3. Tiempo de remediación y superficie,Respuesta integrada con razonamiento y resultados,informe §5.6,Verificado
+Consigna: T1190,4. Relación de k con remediación,Respuesta integrada con razonamiento y resultados,"informe §5.3, §5.6",Verificado
+Consigna: Limitaciones,1. Igual probabilidad de parcheo,Respuesta integrada con razonamiento y resultados,informe §5.7 párrafo 1,Verificado
+Consigna: Limitaciones,2. k constante,Respuesta integrada con razonamiento y resultados,informe §5.7 párrafo 2,Verificado
+Consigna: Limitaciones,3. Importancia desigual de equipos,Respuesta integrada con razonamiento y resultados,informe §5.7 párrafo 2,Verificado
+Consigna: Limitaciones,4. Severidad desigual,Respuesta integrada con razonamiento y resultados,informe §5.7 párrafo 2,Verificado
+Consigna: Limitaciones,5. Ataques reales,Respuesta integrada con razonamiento y resultados,informe §5.7 párrafo 3,Verificado
+Consigna: Limitaciones,6. Nuevas vulnerabilidades,Respuesta integrada con razonamiento y resultados,informe §5.7 párrafo 3,Verificado
+Consigna: Limitaciones,7. Mejoras necesarias,Respuesta integrada con razonamiento y resultados,informe §5.7 párrafos 4-5,Verificado
+Consigna §11,vulnerabilidad,Fuentes técnicas primarias consultadas,"informe §2.5, §5.6; referencias.bib; fuentes_consultadas.csv",Verificado
+Consigna §11,parche,Fuentes técnicas primarias consultadas,"informe §2.5, §5.6; referencias.bib; fuentes_consultadas.csv",Verificado
+Consigna §11,gestión de vulnerabilidades,Fuentes técnicas primarias consultadas,"informe §2.5, §5.6; referencias.bib; fuentes_consultadas.csv",Verificado
+Consigna §11,tiempo de remediación,Fuentes técnicas primarias consultadas,"informe §2.5, §5.6; referencias.bib; fuentes_consultadas.csv",Verificado
+Consigna §11,CVE,Fuentes técnicas primarias consultadas,"informe §2.5, §5.6; referencias.bib; fuentes_consultadas.csv",Verificado
+Consigna §11,CVSS,Fuentes técnicas primarias consultadas,"informe §2.5, §5.6; referencias.bib; fuentes_consultadas.csv",Verificado
+Consigna §11,priorización,Fuentes técnicas primarias consultadas,"informe §2.5, §5.6; referencias.bib; fuentes_consultadas.csv",Verificado
+Consigna §11,consecuencias de no actualizar,Fuentes técnicas primarias consultadas,"informe §2.5, §5.6; referencias.bib; fuentes_consultadas.csv",Verificado
+Consigna §11,MITRE ATT&CK,Fuentes técnicas primarias consultadas,"informe §2.5, §5.6; referencias.bib; fuentes_consultadas.csv",Verificado
+Consigna §13,precisión de Euler,Síntesis vinculada con datos y clasificación,informe §5.8; Tablas 2-4 y 8,Verificado
+Consigna §13,precisión de Heun,Síntesis vinculada con datos y clasificación,informe §5.8; Tablas 2-4 y 8,Verificado
+Consigna §13,iteraciones,Síntesis vinculada con datos y clasificación,informe §5.8; Tablas 2-4 y 8,Verificado
+Consigna §13,efecto de h,Síntesis vinculada con datos y clasificación,informe §5.8; Tablas 2-4 y 8,Verificado
+Consigna §13,estabilidad,Síntesis vinculada con datos y clasificación,informe §5.8; Tablas 2-4 y 8,Verificado
+Consigna §13,interpretación informática,Síntesis vinculada con datos y clasificación,informe §5.8; Tablas 2-4 y 8,Verificado
+Guía,Resumen hasta 300 palabras y autosuficiente,LaTeX y revisión final,informe Resumen,Verificado
+Guía,Introducción problema justificación objetivos organización,LaTeX y revisión final,informe §1,Verificado
+Guía,Marco pertinente por conceptos con citas,LaTeX y revisión final,informe §2,Verificado
+Guía,Metodología replicable y ubicación del código,LaTeX y revisión final,informe §3; README.md,Verificado
+Guía,Resultados sin explicación causal,LaTeX y revisión final,informe §4,Verificado
+Guía,Discusión interpretación limitaciones,LaTeX y revisión final,informe §5,Verificado
+Guía,Conclusiones sin hallazgos nuevos,LaTeX y revisión final,informe §6,Verificado
+Guía,Bibliografía APA correspondencia con citas,LaTeX y revisión final,informe §7; referencias.bib,Verificado
+Guía,Figuras numeradas pie debajo ejes leyenda referencia,LaTeX y revisión final,informe Figuras 1-9; src/visualizacion.py,Verificado
+Guía,Tablas completas título encima unidades notas referencia,LaTeX y revisión final,informe Tablas 1-8; src/informe.py,Verificado
+Guía,Anexos opcionales sin relegar información esencial,LaTeX y revisión final,informe Informe completo sin anexos,Verificado
+Rúbrica: Fondo,Comprensión conceptual,Revisión por categorías; sin puntajes inventados,verificacion/revision_final.md; pruebas.txt; auditoria.json,Verificado
+Rúbrica: Fondo,Elección de métodos,Revisión por categorías; sin puntajes inventados,verificacion/revision_final.md; pruebas.txt; auditoria.json,Verificado
+Rúbrica: Fondo,Interpretación,Revisión por categorías; sin puntajes inventados,verificacion/revision_final.md; pruebas.txt; auditoria.json,Verificado
+Rúbrica: Fondo,Coherencia de conclusiones,Revisión por categorías; sin puntajes inventados,verificacion/revision_final.md; pruebas.txt; auditoria.json,Verificado
+Rúbrica: Fondo,Terminología,Revisión por categorías; sin puntajes inventados,verificacion/revision_final.md; pruebas.txt; auditoria.json,Verificado
+Rúbrica: Fondo,Argumentación,Revisión por categorías; sin puntajes inventados,verificacion/revision_final.md; pruebas.txt; auditoria.json,Verificado
+Rúbrica: Forma,Estructura,Revisión por categorías; sin puntajes inventados,verificacion/revision_final.md; pruebas.txt; auditoria.json,Verificado
+Rúbrica: Forma,APA,Revisión por categorías; sin puntajes inventados,verificacion/revision_final.md; pruebas.txt; auditoria.json,Verificado
+Rúbrica: Forma,Formato,Revisión por categorías; sin puntajes inventados,verificacion/revision_final.md; pruebas.txt; auditoria.json,Verificado
+Rúbrica: Forma,Referencias,Revisión por categorías; sin puntajes inventados,verificacion/revision_final.md; pruebas.txt; auditoria.json,Verificado
+Rúbrica: Forma,Claridad visual,Revisión por categorías; sin puntajes inventados,verificacion/revision_final.md; pruebas.txt; auditoria.json,Verificado
+Rúbrica: Forma,Ortografía y redacción,Revisión por categorías; sin puntajes inventados,verificacion/revision_final.md; pruebas.txt; auditoria.json,Verificado
+Rúbrica: Código,Funcionamiento,Revisión por categorías; sin puntajes inventados,verificacion/revision_final.md; pruebas.txt; auditoria.json,Verificado
+Rúbrica: Código,Reproducibilidad,Revisión por categorías; sin puntajes inventados,verificacion/revision_final.md; pruebas.txt; auditoria.json,Verificado
+Rúbrica: Código,Claridad y buenas prácticas,Revisión por categorías; sin puntajes inventados,verificacion/revision_final.md; pruebas.txt; auditoria.json,Verificado
+Rúbrica: Código,Organización y comentarios,Revisión por categorías; sin puntajes inventados,verificacion/revision_final.md; pruebas.txt; auditoria.json,Verificado
+Rúbrica: Código,Visualización,Revisión por categorías; sin puntajes inventados,verificacion/revision_final.md; pruebas.txt; auditoria.json,Verificado
+Ejemplo,Estilo útil sin copia ni inconsistencias,"Sobriedad, índice y ecuaciones; pies únicos; resultados separados",informe/informe.tex; verificacion/revision_final.md,Verificado
+Solicitud del usuario,Euler y Heun validaciones último paso negativos,Entregable creado y verificado,src/metodos.py; tests/test_metodos.py,Verificado
+Solicitud del usuario,Tablas y figuras todas las combinaciones,Entregable creado y verificado,resultados/tablas; resultados/figuras; tests/test_experimentos.py,Verificado
+Solicitud del usuario,Notebook ejecutado desde principio a fin,Entregable creado y verificado,notebooks/proyecto_calculo.ipynb; auditoria.json,Verificado
+Solicitud del usuario,LaTeX PDF Bib recursos y recompilación,Entregable creado y verificado,informe; README.md; compilacion.txt,Verificado
+Solicitud del usuario,Fuentes verificables APA,Entregable creado y verificado,referencias.bib; fuentes_consultadas.csv,Verificado
+Solicitud del usuario,Defensa oral,Entregable creado y verificado,defensa/guia_defensa.md,Verificado
+Solicitud del usuario,Dependencias y README,Entregable creado y verificado,requirements.txt; README.md,Verificado
+Solicitud del usuario,ZIP sin entornos temporales ni cachés,Entregable creado y verificado,../proyecto_calculo.zip; manifiesto_sha256.csv,Verificado
+Solicitud del usuario,Supuestos y alcance real,Entregable creado y verificado,"informe §3.4, §5.7; README.md",Verificado
+Solicitud del usuario,Verificaciones 1-10 matemáticas,Entregable creado y verificado,tests/test_metodos.py; pruebas.txt,Verificado
+Solicitud del usuario,Verificaciones 11-17 documentales,Entregable creado y verificado,auditoria.json; revision_final.md; tablas_latex.json,Verificado
+Solicitud posterior del usuario,Repositorio público y enlace real en el informe,Repositorio creado sin sobrescribir otro; commit y push normales; .gitignore,https://github.com/Stefano936/calculo-aplicado-simulacion-numerica; informe §3.1; verificacion/publicacion.md,Verificado

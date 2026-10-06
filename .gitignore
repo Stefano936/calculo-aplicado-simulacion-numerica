@@ -1,0 +1,27 @@
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+.build/
+work/
+tmp/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.aux
+*.log
+*.bcf
+*.bbl
+*.blg
+*.out
+*.toc
+*.run.xml
+*.synctex.gz
+.DS_Store
+Thumbs.db
+# Se conserva el informe PDF final y las figuras exportadas.

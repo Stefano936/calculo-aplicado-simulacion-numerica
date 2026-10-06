@@ -1,0 +1,20 @@
+Documento,Requisito,Implementación o evidencia prevista,Ubicación prevista
+Consigna pp.3-6,Actividades 1 y 3: Euler y predictor corrector Heun genéricos,Funciones documentadas y pruebas independientes,src/metodos.py; tests/test_metodos.py; informe sección 2 y 3
+Consigna p.4,Crecimiento lineal tres pasos y comparación,CSV y gráfica conjunta; discusión de pendiente constante,resultados/tablas/lineal.csv; informe 4.1 y 5.1
+Consigna pp.4-5,Exponencial cuatro pasos y referencia,Trayectorias completas y ampliación inicial,resultados/figuras/exponencial.png; informe 4.2
+Consigna p.5,Actividad 2 tabla cinco pasos y cuatro preguntas,Error final máximo y costos; discusión contextual,resultados/tablas/error.csv; informe 4.2 y 5.1
+Consigna p.6,Actividad 3 comparación y cuatro preguntas,Tabla seis combinaciones y evaluaciones,resultados/tablas/comparacion.csv; informe 4.3 y 5.2
+Consigna pp.7-8,Actividad 4 nueve escenarios y cinco interpretaciones,27 observaciones en tiempos 5 10 15 y cuatro figuras,resultados/tablas/vulnerabilidades.csv; informe 4.4 y 5.3
+Consigna p.9,Actividad 5 siete preguntas y sucesión geométrica,Derivación y clasificación de cinco regímenes,informe 2.4 y 5.4; resultados/tablas/clasificacion.csv
+Consigna pp.9-10,Actividad 6 cuatro escenarios y cinco tareas,Equilibrios y trayectorias Euler intervalo adoptado,resultados/tablas/extendido.csv; informe 4.5 y 5.5
+Consigna p.10,Investigación nueve conceptos y cuatro preguntas T1190,Fuentes primarias consultadas y ejemplo defensivo,informe 2.5 y 5.6; informe/referencias.bib
+Consigna pp.10-11,Siete preguntas de limitaciones,Discusión explícita básico y extendido,informe 5.7
+Consigna p.11,Análisis global precisión paso costo estabilidad,Síntesis respaldada en tablas y convergencia,informe 5.8
+Guía pp.1-5,Estructura resumen hasta 300 palabras resultados separados,Informe con siete secciones índice y bibliografía,informe/informe.tex
+Guía pp.3-4,Tablas tituladas arriba figuras con pie único abajo referencias,LaTeX con labels y referencias; exportación 240 dpi,informe/informe.tex; resultados/figuras
+Guía p.2,Metodología reproducible y ubicación del código,Entrega local sin repositorio remoto; comandos,README.md; informe 3
+Rúbrica,Fondo comprensión métodos interpretación conclusiones terminología argumento,Revisión factual y pruebas matemáticas,verificacion/revision_final.md
+Rúbrica,Forma estructura APA legibilidad ortografía,Compilación Biber y revisión visual de todas las páginas,verificacion/revision_final.md
+Rúbrica,Código funcionamiento reproducción organización comentarios visualización,Notebook desde kernel limpio pruebas y regeneración,verificacion/revision_final.md
+Ejemplo pp.1-18,Estilo sobrio ecuaciones tablas gráficas y explicación concreta,Adoptar organización útil sin copiar contenido ni identidad,informe/informe.tex
+Solicitud del usuario,22 verificaciones entregables ZIP defensa LaTeX recursos,Pruebas y auditoría hashes notebook ejecutado ZIP limpio,verificacion; defensa; src/generar_entregables.py

@@ -1,0 +1,6 @@
+regimen,signo_monotonia,magnitud,limite,estabilidad_sentido
+0<hk<1,Positivo; decrece,Disminuye,0,Asintótica; sí
+hk=1,Cero desde n=1,Se anula,0,Asintótica; extinción artificial
+1<hk<2,Alternante,Disminuye,0,Asintótica; no
+hk=2,Alternante,Constante,No existe,Frontera; no
+hk>2,Alternante,Crece sin cota,No existe,Inestable; no

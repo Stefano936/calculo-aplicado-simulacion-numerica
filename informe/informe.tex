@@ -1,0 +1,255 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,es-tabla,es-nodecimaldot]{babel}
+\usepackage{lmodern,amsmath,amssymb,graphicx,booktabs,longtable,array}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{microtype}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{placeins}
+\usepackage{csquotes}
+\usepackage[backend=biber,style=apa]{biblatex}
+\addbibresource{referencias.bib}
+\usepackage[hidelinks,pdfauthor={Stefano Francolino},pdftitle={Simulación numérica de sistemas dinámicos aplicada a ciberseguridad}]{hyperref}
+\captionsetup{font=small,labelfont=bf}
+\setlength{\parskip}{5pt}
+\setlength{\parindent}{0pt}
+\renewcommand{\arraystretch}{1.15}
+\emergencystretch=2em
+\input{generados/valores.tex}
+\newcommand{\grafica}[3]{\begin{figure}[htbp]\centering\includegraphics[width=.91\linewidth]{../resultados/figuras/#1.pdf}\caption{#2}\label{fig:#3}\end{figure}}
+\begin{document}
+\hypersetup{pageanchor=false}
+\begin{titlepage}
+\centering
+\vspace*{2cm}
+{\Large Universidad Católica del Uruguay\par}
+\vspace{1cm}
+{\large Cálculo Aplicado\par}
+\vspace{2cm}
+{\LARGE\bfseries Simulación numérica de sistemas dinámicos aplicada a ciberseguridad\par}
+\vspace{.7cm}
+{\large Ecuaciones en diferencias, Euler, Heun y gestión de vulnerabilidades\par}
+\vspace{2cm}
+{\large Stefano Francolino\par}
+\vfill
+Proyecto computacional reproducible\\
+Código, notebook, datos y recursos entregados en la carpeta del proyecto
+\end{titlepage}
+\hypersetup{pageanchor=true}
+\section*{Resumen}
+\addcontentsline{toc}{section}{Resumen}
+Se estudia la aproximación numérica de sistemas dinámicos y su aplicación a un modelo agregado de remediación de equipos vulnerables. Se implementaron Euler y el predictor-corrector de Heun, con validaciones y ajuste del último paso. Se ejecutaron experimentos de crecimiento lineal, decrecimiento exponencial, tres organizaciones con distintas tasas de remediación y cuatro escenarios con aparición de equipos vulnerables. Se compararon las aproximaciones con referencias proporcionadas, mediante errores absolutos final y máximo, pasos y evaluaciones de la función. Las expresiones de sucesiones geométricas sirvieron como comprobación independiente.
+
+Euler reprodujo el crecimiento lineal dentro del redondeo. En el caso exponencial, el error máximo disminuyó de \ErrorEulerUno{} a \ErrorEulerPequeno{} al reducir el paso de 1 a 0,01, con un aumento de 10 a 1000 pasos. Heun presentó menor error máximo para los tres pasos comparados; con paso 1 tuvo mayor error final que Euler. La organización con mayor tasa de remediación disminuyó más rápidamente su cantidad vulnerable. Los escenarios extendidos descendieron hacia equilibrios determinados por el cociente entre aparición y remediación. El análisis discreto mostró que convergencia numérica y sentido físico son condiciones diferentes.
+
+Se concluye que la elección del método y del paso requiere considerar precisión, costo y validez del modelo. Las simulaciones ilustran tendencias de remediación, sin estimar incidentes ni probabilidades de ataque. El proyecto entrega resultados regenerables, pruebas y documentación para interpretar sus supuestos y defender sus conclusiones.
+\clearpage
+\tableofcontents
+\clearpage
+\section{Introducción}
+La gestión de vulnerabilidades enfrenta un problema temporal: mientras se corrigen equipos afectados, otros pueden incorporarse al conjunto vulnerable. Interesa representar esa evolución y evaluar cómo cambia al modificar la rapidez de remediación. Una simulación permite estudiar escenarios controlados, comparar decisiones numéricas y detectar comportamientos que una cifra final aislada puede ocultar.
+
+El proyecto sigue la consigna de Cálculo Aplicado entregada con el trabajo. No utiliza mediciones de organizaciones reales. A, B y C son escenarios hipotéticos con igual cantidad inicial de equipos y diferente parámetro de remediación. El problema se aborda a partir de sucesiones y derivadas, sin requerir la resolución analítica de las ecuaciones diferenciales.
+
+El objetivo general es estudiar métodos numéricos sencillos para aproximar sistemas dinámicos y analizar su aplicación a la gestión de vulnerabilidades. Los objetivos específicos son relacionar la tasa de cambio continua con una recurrencia discreta; implementar y verificar Euler y Heun; medir el efecto del paso sobre error y costo; interpretar los parámetros de remediación y aparición; y distinguir estabilidad numérica, sentido físico y alcance informático.
+
+El marco teórico presenta los conceptos necesarios. La metodología describe el procedimiento reproducible. Resultados reúne las mediciones y figuras; Discusión explica sus comportamientos y limitaciones. Las conclusiones responden los objetivos y la bibliografía identifica las fuentes consultadas.
+
+\section{Marco teórico}
+\subsection{Sucesiones, derivadas y condiciones iniciales}
+Una sucesión asigna un valor $x_n$ a cada índice entero $n$. Una ecuación en diferencias relaciona términos consecutivos. En cambio, una ecuación diferencial establece la tasa instantánea de cambio de una variable continua:
+\begin{equation}\label{eq:edo}
+x'(t)=f(t,x(t)),\qquad x(t_0)=x_0.
+\end{equation}
+La condición inicial indica desde qué estado comienza la evolución. La derivada puede aproximarse mediante el cociente $[x(t+h)-x(t)]/h$ para un incremento pequeño. Despejar $x(t+h)$ conduce a la actualización de Euler. La discretización conserva un número finito de estados y no representa por sí misma todos los valores intermedios \parencite{euler}.
+
+\subsection{Euler y el predictor-corrector de Heun}
+Sea $t_{n+1}=t_n+\Delta t_n$, donde $\Delta t_n=h$ salvo un posible último paso ajustado. Euler utiliza la pendiente al comienzo:
+\begin{equation}\label{eq:euler}
+x_{n+1}=x_n+\Delta t_n f(t_n,x_n).
+\end{equation}
+Es una extrapolación local sobre la recta tangente. Heun primero calcula una predicción y luego promedia las pendientes inicial y predicha:
+\begin{align}
+x_{\mathrm{pred}}&=x_n+\Delta t_n f(t_n,x_n),\label{eq:pred}\\
+x_{n+1}&=x_n+\frac{\Delta t_n}{2}\left[f(t_n,x_n)+f(t_{n+1},x_{\mathrm{pred}})\right].\label{eq:heun}
+\end{align}
+La predicción estima el estado al final; la segunda pendiente se evalúa en ese estado provisional. El promedio incorpora la variación de pendiente durante el intervalo. Aquí ``Euler mejorado'' designa exactamente las ecuaciones \ref{eq:pred}--\ref{eq:heun}. La nomenclatura cambia entre textos: \textcite{rk} distingue variantes de dos etapas con otros nombres. Se toma su fundamento de orden y etapas, sin sustituir la fórmula exigida por punto medio.
+
+\subsection{Error y convergencia}
+Para una referencia $x(t_n)$ se definen
+\begin{equation}\label{eq:error}
+D_n=x_n-x(t_n),\quad E_n=|D_n|,\quad E_f=E_N,\quad E_{\max}=\max_{0\le n\le N}E_n.
+\end{equation}
+$D_n$ conserva el signo; $E_n$ mide distancia y nunca es negativo. Error final y máximo contestan preguntas diferentes. El máximo se calcula solamente en los nodos disponibles, no es un máximo continuo. $N$ pasos producen $N+1$ puntos, incluida la condición inicial.
+
+Bajo regularidad suficiente de $f$, control de su dependencia del estado y un intervalo fijo, Euler tiene error global de orden $h$ y la variante de dos etapas utilizada tiene orden $h^2$ \parencite{euler,rk}. El defecto de un paso, empezando desde el estado exacto, tiene respectivamente órdenes $h^2$ y $h^3$. El orden global describe convergencia al refinar la malla, no una comparación garantizada en cualquier nodo para pasos grandes. Además del error de discretización existe redondeo de punto flotante.
+
+\subsection{Remediación, estabilidad y sentido físico}
+El modelo básico y su referencia proporcionada son
+\begin{equation}\label{eq:basico}
+V'=-kV,\quad V(0)=V_0,\qquad V_{\mathrm{ref}}(t)=V_0e^{-kt}.
+\end{equation}
+$V$ representa equipos afectados, interpretados como cantidad agregada o esperada. $k>0$ tiene unidades de tiempo inverso; $kV$ es la tasa de salida del conjunto vulnerable. Euler produce, con paso constante,
+\begin{equation}\label{eq:geometrica}
+V_{n+1}=(1-hk)V_n,\qquad V_n=V_0(1-hk)^n.
+\end{equation}
+Es una sucesión geométrica de razón $r=1-hk$. La expresión se obtiene por sustitución sucesiva, o por inducción desde $V_0$. Si $|r|<1$, tanto $V_n$ como una perturbación inicial multiplicada por $r^n$ tienden a cero. Esta condición expresa estabilidad asintótica en este modelo. Para cantidades no negativas también se necesita $r\ge0$: estabilidad y sentido físico no son equivalentes.
+
+El modelo extendido incorpora un flujo de entrada:
+\begin{equation}\label{eq:extendido}
+V'=\lambda-kV,\qquad V^*=\frac{\lambda}{k}.
+\end{equation}
+El equilibrio resulta del balance $0=\lambda-kV^*$. $\lambda$ mide equipos que pasan a estar vulnerables por unidad de tiempo; no cuenta directamente CVE publicadas. No se requiere resolver esta ecuación analíticamente. Al restar el equilibrio en la actualización de Euler se obtiene una verificación discreta:
+\begin{equation}\label{eq:desviacion}
+V_{n+1}-V^*=(1-hk)(V_n-V^*).
+\end{equation}
+
+\subsection{Conceptos de ciberseguridad relevantes}
+Una vulnerabilidad es una debilidad de un sistema o de sus controles que puede ser aprovechada por una amenaza \parencite{vulnerabilidad}. Un parche modifica software para corregir fallos; la remediación puede incluir además cambios de configuración o mitigaciones. La gestión de vulnerabilidades identifica y evalúa problemas, prioriza su tratamiento y comprueba el resultado. La gestión de parches comprende identificar, priorizar, obtener, instalar y verificar actualizaciones \parencite{nist}.
+
+El tiempo de remediación es el intervalo entre un inicio definido, por ejemplo la detección, y la corrección verificada. Su medición necesita declarar ambos eventos. En este estudio no se midieron tiempos reales ni se estimó $k$ a partir de ellos.
+
+CVE proporciona identificadores comunes para reconocer una vulnerabilidad divulgada \parencite{cve}. CVSS comunica sus características y severidad; la versión 4.0 distingue métricas base, de amenaza, ambientales y suplementarias \parencite{cvss}. ATT\&CK organiza comportamientos y técnicas adversarias; T1190 describe el aprovechamiento de debilidades en aplicaciones o sistemas expuestos a Internet para acceso inicial \parencite{mitre}. Un identificador, una valoración de severidad y una técnica de ataque cumplen funciones distintas.
+
+La priorización puede considerar explotación activa, exposición externa, criticidad del activo y controles existentes. El catálogo KEV de CISA constituye una entrada para priorizar vulnerabilidades cuya explotación se ha observado \parencite{cisa}. No convierte por sí solo una cantidad vulnerable en una probabilidad de incidente.
+
+\section{Metodología}
+\subsection{Diseño y herramientas}
+Se realizó un estudio computacional determinista con Python \VersionPython{}, NumPy \VersionNumpy{}, pandas \VersionPandas{} y Matplotlib \VersionMatplotlib{}. Jupyter documenta la ejecución. LaTeX y Biber generan el informe con citas APA. El código, notebook, pruebas, fuentes LaTeX y recursos se entregan también en el repositorio público \href{https://github.com/Stefano936/calculo-aplicado-simulacion-numerica}{Stefano936/calculo-aplicado-simulacion-numerica}, publicado por autorización del estudiante. Se conserva además la entrega local con ZIP. La consigna, la guía, la rúbrica y el informe de ejemplo se leyeron antes de implementar; la matriz inicial registra el diseño y la matriz final localiza evidencias reales.
+
+Los módulos separan métodos, métricas, experimentos, visualización y generación de entregables. \texttt{src/experimentos.py} es la única fuente de cálculos. Sus datos alimentan CSV completos, tablas LaTeX y notebook; las magnitudes citadas en el texto se insertan desde macros generadas, evitando transcribir resultados. Las imágenes se exportan a PNG de 240 dpi y PDF vectorial. El README proporciona instalación y comandos.
+
+\subsection{Escenarios y referencias}
+Se ejecutaron $x'=1$, $x_0=0$, en $[0,10]$, con $h=1;0,5;0,1$ y referencia $x=t$. Para $x'=-x$, $x_0=1$, en $[0,10]$, se utilizaron $h=1;0,5;0,1;0,05;0,01$ y referencia $e^{-t}$. La figura de trayectorias usa los cuatro pasos solicitados en la verificación; la tabla de error y su figura incluyen los cinco. Euler y Heun se compararon con $h=1;0,5;0,1$.
+
+Para remediación se fijó $V_0=1000$, intervalo $[0,20]$, organizaciones A ($k=0,1$), B ($k=0,3$) y C ($k=0,7$), y los tres pasos $1;0,5;0,1$. Se registraron todas las trayectorias, los errores y los valores en $t=5,10,15$. Para el modelo extendido se usó $k=0,3$, $V_0=1000$ y $\lambda=0;50;100;200$. Como la consigna no fija su malla, se adoptó $[0,20]$ y $h=0,1$ según la solicitud.
+
+Como comprobación complementaria se simularon $hk=0,5;1;1,5;2;2,2$ con $V_0=1$ y diez pasos. Para observar orden de convergencia se compararon errores máximos con $h=0,2;0,1;0,05;0,025;0,0125$. Se calculó $p_{\mathrm{obs}}=\log_2(E_{\max}(h)/E_{\max}(h/2))$ sin interpretar esta estimación como una demostración general.
+
+Las referencias exponenciales de los casos básicos son las suministradas. En el extendido, el equilibrio y la recurrencia \ref{eq:desviacion} sustentan el análisis; el CSV de trayectorias incluye además la expresión $V^*+(V_0-V^*)e^{-kt}$ únicamente como contraste complementario, verificable por derivación. No se utilizó esa expresión para generar estados Euler ni es necesario deducirla por resolución de la ecuación.
+
+\subsection{Malla, costo y validaciones}
+Los integradores reciben estados escalares reales y finitos, una función invocable, $h>0$ y $t_f\ge t_0$. Si los tiempos coinciden devuelven el estado inicial y cero pasos. Se calcula la malla a partir del índice, evitando acumular el tiempo por sumas repetidas. Un cociente intervalo/paso a pocos ulps de un entero se considera entero; se fija el último nodo exactamente en $t_f$. Cada actualización utiliza la diferencia real entre sus nodos, incluida la segunda evaluación de Heun. Si la precisión de máquina impide avanzar, o se solicitan más de diez millones de pasos, se rechaza la entrada con un mensaje claro.
+
+Los valores negativos se conservan. Se rechazan pendientes y estados no finitos. NumPy utiliza precisión doble; los errores se calculan antes del formateo. Los CSV conservan 17 cifras significativas. En las tablas se usa notación científica para errores y magnitudes pequeñas, con punto decimal por uniformidad computacional. Las consultas de nodos utilizan tolerancia absoluta $10^{-10}$, sin interpolación ni igualdad exacta de decimales binarios.
+
+El costo se expresa mediante pasos y llamadas efectivamente contadas a $f$: una por paso en Euler y dos en Heun. No se infiere eficiencia desde tiempos de ejecución diminutos. Las pruebas contrastan las recurrencias con $(1-h)^n$, $(1-h+h^2/2)^n$ y $V_0(1-hk)^n$; también prueban dependencia explícita del tiempo, último paso, entradas inválidas, equilibrio, conteo y convergencia. La auditoría adicional comprueba todas las combinaciones, consistencia CSV/LaTeX y ejecución del notebook desde un kernel limpio.
+
+\subsection{Supuestos y decisiones de presentación}
+Se emplean unidades de tiempo genéricas porque no se especifican días. Los equipos admiten decimales como agregado; no se redondean a enteros durante la evolución. $k$ y $\lambda$ son constantes hipotéticas. No hay datos para calibración ni una población total explícita. La tipografía de 11 puntos, los márgenes de 2,5 cm y el papel A4 son elecciones de legibilidad, no requisitos institucionales inferidos. Se tomó del ejemplo la organización sobria, sin copiar su autoría, fecha ni resultados.
+
+Se utilizó asistencia de IA en Codex para implementar, redactar y revisar el proyecto, con cálculos ejecutados por Python y fuentes técnicas consultadas. Los documentos suministrados no establecen una política adicional de declaración de IA. Esta descripción corresponde al uso efectivo; no atribuye al estudiante una revisión personal que todavía no realizó.
+
+\section{Resultados}
+\subsection{Crecimiento lineal}
+La Tabla~\ref{tab:lineal} presenta las tres ejecuciones; la Figura~\ref{fig:lineal} reúne referencia y aproximaciones. Los valores finales son 10, con los errores indicados en la tabla.
+\input{generados/lineal.tex}
+\grafica{lineal}{Crecimiento $x'=1$, $x(0)=0$ en $[0,10]$: referencia $x=t$ y Euler con tres pasos. Las curvas se superponen en los nodos.}{lineal}
+\FloatBarrier
+\subsection{Decrecimiento exponencial y error}
+La Figura~\ref{fig:exponencial} muestra las cuatro aproximaciones y una ampliación de $[0,2]$. Con $h=1$, la sucesión numérica toma valor cero desde $t=1$. La Tabla~\ref{tab:error} incluye los cinco pasos del análisis de error y la Figura~\ref{fig:errores} muestra $E_n$.
+\input{generados/error.tex}
+\grafica{exponencial}{Modelo $x'=-x$, $x(0)=1$: referencia $e^{-t}$ y Euler en $[0,10]$, con ampliación inicial a la derecha.}{exponencial}
+\grafica{errores}{Error absoluto en los nodos de Euler para $x'=-x$, $x(0)=1$, referencia $e^{-t}$ y cinco tamaños de paso en $[0,10]$.}{errores}
+\FloatBarrier
+\subsection{Comparación de métodos}
+La Tabla~\ref{tab:comparacion} incluye valor final, ambos errores y costos. Heun tiene menor error máximo en las tres comparaciones. Con $h=1$, el error final de Heun es mayor que el de Euler. La Tabla~\ref{tab:convergencia} registra el experimento complementario de refinamiento.
+\input{generados/comparacion.tex}
+\input{generados/convergencia.tex}
+\FloatBarrier
+\subsection{Organizaciones hipotéticas}
+La Tabla~\ref{tab:vulnerabilidades} contiene las 27 observaciones solicitadas, sin omitir combinaciones. La Tabla~\ref{tab:vulnerabilidadesresumen} agrega los nueve resúmenes de las trayectorias completas. La Figura~\ref{fig:organizaciones} compara A, B y C con $h=1$; las Figuras~\ref{fig:A}, \ref{fig:B} y \ref{fig:C} incluyen los tres pasos y la referencia de cada organización. C presenta menores cantidades que B y A en los tiempos registrados para un mismo paso.
+\input{generados/vulnerabilidades.tex}
+\input{generados/vulnerabilidades_resumen.tex}
+\grafica{organizaciones}{Euler con $h=1$ para A ($k=0,1$), B ($k=0,3$) y C ($k=0,7$), $V_0=1000$, intervalo $[0,20]$.}{organizaciones}
+\grafica{organizacion_A}{Organización A: $V'=-0,1V$, $V_0=1000$. Euler con $h=1;0,5;0,1$ y referencia $1000e^{-0,1t}$ en $[0,20]$.}{A}
+\grafica{organizacion_B}{Organización B: $V'=-0,3V$, $V_0=1000$. Euler con $h=1;0,5;0,1$ y referencia $1000e^{-0,3t}$ en $[0,20]$.}{B}
+\grafica{organizacion_C}{Organización C: $V'=-0,7V$, $V_0=1000$. Euler con $h=1;0,5;0,1$ y referencia $1000e^{-0,7t}$ en $[0,20]$.}{C}
+\FloatBarrier
+\subsection{Aparición de equipos vulnerables}
+La Tabla~\ref{tab:extendido} registra los cuatro escenarios. Todos tienen 200 pasos, 201 puntos y decrecen desde 1000. Los valores finales permanecen por encima de los respectivos equilibrios. La Figura~\ref{fig:extendido} muestra las trayectorias.
+\input{generados/extendido.tex}
+\grafica{extendido}{Euler para $V'=\lambda-0,3V$, $V_0=1000$, $h=0,1$ en $[0,20]$. Se muestran las cuatro tasas de aparición y sus equilibrios $V^*=\lambda/0,3$.}{extendido}
+\FloatBarrier
+\subsection{Regímenes discretos complementarios}
+La Figura~\ref{fig:regimenes} conserva los signos de los estados calculados. Para $hk=1$ los términos posteriores al inicial son cero; para $hk=2$ alternan entre 1 y $-1$. Los valores completos se entregan en \texttt{regimenes.csv}; la clasificación matemática se presenta en Discusión.
+\grafica{regimenes}{Euler para $V'=-kV$, normalizado con $V_0=1$, $h=1$ y diez pasos. Cinco valores de $hk$ ilustran disminución, anulación, alternancia y crecimiento de magnitud.}{regimenes}
+\FloatBarrier
+
+\section{Discusión}
+\subsection{Efecto del paso y significado del error}
+En el crecimiento lineal la pendiente es constante: cada incremento Euler es exactamente el incremento temporal en aritmética exacta. Por ello reducir $h$ no aporta una mejora necesaria; el pequeño error observado sólo puede reflejar punto flotante. Este caso verifica la implementación, pero no mide su comportamiento sobre curvas.
+
+En el exponencial, la pendiente $-x$ cambia durante cada intervalo. Euler mantiene la pendiente inicial, de modo que no sigue exactamente la curvatura. La recurrencia $x_{n+1}=(1-h)x_n$ explica el caso $h=1$: anula el estado después del primer paso y lo mantiene allí, aunque $e^{-t}>0$ para todo tiempo finito. Con $0<h<1$, $1-h<e^{-h}$ y las iteraciones quedan por debajo de la referencia. La diferencia con signo es negativa; el error absoluto es positivo.
+
+La Tabla~\ref{tab:error} muestra que disminuir $h$ reduce los errores final y máximo en las mallas examinadas. El máximo no ocurre necesariamente al final: en $h=1$ es $e^{-1}$ en $t=1$, mientras el error final es $e^{-10}$. Evaluar sólo el último valor ocultaría la desviación inicial. Al pasar de $h=1$ a $0,01$, los pasos y evaluaciones crecen de 10 a 1000. El compromiso precisión--costo es observable, pero no siempre conviene el paso más pequeño: depende de la tolerancia requerida, la información disponible y el costo. Refinar más allá de la incertidumbre del modelo no aporta necesariamente utilidad; en refinamientos extremos también interviene el redondeo.
+
+\subsection{Euler frente a Heun y el caso aparentemente contradictorio}
+Heun combina dos pendientes y tiene dos evaluaciones por paso. Para $x'=-x$, su factor es $1-h+h^2/2$. Con $h=1$, $x_{10}=2^{-10}=0,0009765625$, mientras Euler da cero. Como la referencia en $t=10$ es mucho más pequeña, cero queda más cerca de ese valor que $2^{-10}$. Esto explica que Euler tenga menor error final en esa comparación, sin representar mejor la trayectoria completa.
+
+El error máximo de Heun con $h=1$ es \ErrorHeunUno{}, frente a \ErrorEulerUno{} de Euler (Tabla~\ref{tab:comparacion}). Heun también reduce ambos errores respecto de Euler con $h=0,5$ y $0,1$. La métrica debe explicitarse antes de afirmar cuál es más preciso. El caso contradictorio no se corrigió ni se descartó: las fórmulas geométricas lo confirman.
+
+La Tabla~\ref{tab:convergencia} ofrece órdenes observados cercanos a uno y dos al refinar Euler y Heun. La ventaja de orden es una tendencia bajo hipótesis adecuadas. Heun necesita más operaciones a igual paso, pero comparar igual costo puede cambiar la elección: Heun con $h=0,1$ y Euler con $h=0,05$ realizan 200 evaluaciones cada uno. Sus errores máximos son \ErrorHeunDecima{} y \ErrorEulerMediaDecima{}, respectivamente. Este resultado concreto favorece Heun para esa métrica y esas mallas; no demuestra conveniencia universal para otras funciones, tolerancias o restricciones.
+
+\subsection{Interpretación de las tasas de remediación}
+$k$ representa una rapidez fraccional de remediación: con el mismo estado $V$, un $k$ mayor implica mayor salida $kV$. No es una cantidad fija de equipos corregidos por unidad de tiempo; esa cantidad cambia con $V$. C disminuye más rápidamente porque su parámetro es mayor. Al aumentar $k$, la curva se hace más empinada al inicio y alcanza valores pequeños antes. Las Tablas~\ref{tab:vulnerabilidades} y \ref{tab:vulnerabilidadesresumen} permiten distinguir esa evolución del error numérico.
+
+Por ejemplo, para B con $h=1$ en $t=5$, Euler da \BcincoEuler{} equipos agregados frente a \BcincoRef{} de referencia, con error \BcincoError{}. La aproximación más baja no demuestra mayor capacidad operativa: parte de la diferencia corresponde al método. Comparar organizaciones exige controlar $h$ y el producto $hk$.
+
+Un $k$ elevado puede interpretarse como mayor capacidad de respuesta sólo si se comparan poblaciones y tipos de vulnerabilidad semejantes, con inventarios y criterios de corrección equivalentes. Automatización, personal y recursos, inventario completo, pruebas previas, ventanas de mantenimiento, dependencias y priorización pueden producir tasas diferentes. Un inventario incompleto también puede simular una aparente mejora al dejar fuera equipos afectados. Estas son explicaciones plausibles del parámetro, no factores medidos en A, B o C. La planificación y verificación de parches proporcionan el contexto operativo \parencite{nist}.
+
+\subsection{Sucesión geométrica: estabilidad y validez física}
+La ecuación \ref{eq:geometrica} responde la identificación y fórmula explícita de la Actividad 5. La Tabla~\ref{tab:clasificacion} estudia su límite para $V_0>0$, $h>0$, $k>0$. El análisis supone paso constante y prolongación indefinida del número de iteraciones; no debe confundirse con terminar una simulación en $t=20$.
+\input{generados/clasificacion.tex}
+Para $0<hk<1$, la razón está entre cero y uno: todos los valores son positivos y decrecen estrictamente hacia cero. Con $hk=1$, se pasa a cero en un paso y se permanece allí; la sucesión es no creciente y estable, pero extingue artificialmente en tiempo finito un modelo cuya referencia sigue siendo positiva.
+
+Si $hk>1$, la razón es negativa y el método produce valores negativos desde el primer paso. Para $1<hk<2$, alternan los signos y disminuye la magnitud: existe convergencia a cero, aunque la cantidad negativa carece de interpretación como equipos. Con $hk=2$ la magnitud es constante y no hay límite para $V_0>0$; se trata de la frontera de estabilidad, con perturbaciones acotadas pero sin amortiguación. Para $hk>2$ la magnitud crece sin cota, los signos alternan y no existe límite finito.
+
+Así, el modelo discreto mantiene cantidades no negativas para $0<hk\le1$; la reproducción cualitativa de un descenso gradual positivo requiere $0<hk<1$. La estabilidad asintótica exige $0<hk<2$. Una cantidad negativa de equipos no tiene sentido físico y no se corrige recortándola: indica que la discretización elegida debe revisarse. La Figura~\ref{fig:regimenes} ejemplifica los cinco regímenes. Los nueve escenarios obligatorios tienen $hk\le0,7$ y no presentan negatividad.
+
+\subsection{Balance entre aparición y remediación}
+En los cuatro escenarios $V_0=1000$ supera a $V^*=0;166,666\ldots;333,333\ldots;666,666\ldots$. Inicialmente $\lambda-0,3V_0$ toma valores $-300,-250,-200,-100$ equipos por unidad temporal. Por eso todos comienzan disminuyendo; una $\lambda$ mayor hace menor esa disminución y eleva el nivel de equilibrio. Las pendientes iniciales provienen de los parámetros, no de un ajuste a datos.
+
+Con $h=0,1$, la desviación al equilibrio se multiplica por $0,97$ en cada paso, según \ref{eq:desviacion}. Es positiva y decreciente para estas condiciones iniciales. Los finales de la Tabla~\ref{tab:extendido} se acercan al equilibrio sin alcanzarlo exactamente. Para $\lambda=200$ el resultado final es \ExtendidoFinal{} y el equilibrio es \ExtendidoEquilibrio{}; la separación restante es \ExtendidoDistancia{} equipos agregados. Un valor mostrado con pocas cifras puede parecer igual al equilibrio aunque no lo sea.
+
+El escenario $\lambda=0$ representa remediación sin entradas. Con 50 y 100 aparecen nuevos equipos vulnerables, compensados progresivamente por remediación hasta niveles positivos. Con 200 el nivel residual es mayor: corregir no basta para hacer tender la cantidad a cero mientras continúa ese flujo. En general, si $V_0<V^*$ la tasa inicial sería positiva y la trayectoria crecería hacia el equilibrio; si $V_0=V^*$ sería constante. Esas dos condiciones no son las ejecuciones principales y se distinguen del resultado obtenido. La prueba de equilibrio comprueba el caso constante.
+
+\subsection{T1190 y decisiones defensivas}
+T1190 relaciona la persistencia de debilidades en sistemas expuestos con una vía de acceso inicial \parencite{mitre}. Como ejemplo defensivo, una aplicación web institucional expuesta puede conservar una vulnerabilidad sin corregir. Identificarla, comprobar el parche en un entorno de pruebas, instalarlo y verificarlo reduce el tiempo durante el que esa debilidad está disponible. También pueden restringirse accesos o aplicarse controles compensatorios mientras se prepara la corrección. El ejemplo no describe técnicas de explotación.
+
+Un $k$ mayor, en condiciones comparables, representa una eliminación más rápida del conjunto vulnerable y puede reducir la duración de exposición por vulnerabilidades remediables. No elimina todas las vías de ataque: la superficie incluye otros servicios y configuraciones. El modelo no calcula incidentes, actividad adversaria ni probabilidad de ataque; tampoco demuestra que una organización con menor $V$ sufra necesariamente menos ataques.
+
+Mantener sistemas sin actualizar puede favorecer compromisos, pérdida de información e interrupciones \parencite{nist}. La priorización defensiva integra explotación activa (KEV), severidad (CVSS), exposición, criticidad y controles. CVE identifica el problema, sin sustituir esa evaluación. Estos conceptos orientan qué remediar primero, mientras el modelo agregado sólo representa cuántos equipos permanecen vulnerables.
+
+\subsection{Limitaciones y mejoras}
+La hipótesis de igual probabilidad de parcheo no suele describir una organización heterogénea. El modelo determinista no asigna probabilidades explícitas, pero su tasa proporcional equivale a tratar los equipos con una misma rapidez fraccional agregada. Sistemas heredados, dependencias o restricciones operativas pueden quedar pendientes durante más tiempo.
+
+Un $k$ constante tampoco refleja cambios de personal, saturación, automatización o períodos sin mantenimiento. Los equipos no tienen igual importancia: un servidor crítico o expuesto puede tener mayor impacto que un equipo aislado. Las vulnerabilidades tampoco tienen la misma severidad, y el parámetro agregado no conserva esa diferencia. Contar equipos sin ponderarlos omite prioridades y exposición.
+
+No se simulan ataques reales ni interacción con adversarios. El modelo básico sólo elimina equipos del conjunto vulnerable y no admite nuevas entradas; el extendido sí agrega un flujo constante $\lambda$, sin identificar vulnerabilidades específicas, reingresos individuales o cambios de versión. No hay una población total explícita que limite $V$, por lo que determinados parámetros podrían conducir a cantidades incompatibles con un inventario finito.
+
+También faltan retrasos entre detección, disponibilidad del parche y despliegue; recursos limitados; pruebas y dependencias; inventario incompleto; tasas variables; y la naturaleza discreta de los equipos. No existen datos para calibrar los parámetros ni cuantificar incertidumbre. La precisión respecto de la referencia matemática no valida la adecuación del modelo a una empresa real.
+
+Las mejoras posibles incluyen clases de equipos con tasas distintas y pesos por criticidad; funciones $k(t)$ y $\lambda(t)$; una población total con transiciones entre estados; límites de capacidad; retrasos; y simulaciones de eventos individuales. Sería necesario recopilar datos de detección y corrección verificadas, definir la unidad temporal y comparar predicciones con observaciones. Estas propuestas no se presentan como implementaciones del proyecto.
+
+\subsection{Análisis global: precisión, paso y costo}
+Las tablas muestran que reducir $h$ incrementa el número de iteraciones aproximadamente como $(t_f-t_0)/h$. Cada iteración de Euler utiliza una pendiente y cada iteración de Heun dos. El refinamiento exponencial mejora los errores y los órdenes observados son coherentes con la teoría. El caso lineal muestra que esta mejora no es universalmente necesaria, y el caso $h=1$ muestra que la precisión depende de la métrica.
+
+La estabilidad exige analizar la ecuación y el paso conjuntamente: en remediación importa $hk$, no $h$ aislado. Heun aplicado al modelo básico tiene factor $1-hk+(hk)^2/2$ y estabilidad asintótica para $0<hk<2$; a $hk=2$ el factor es 1. Su estado corregido permanece no negativo para este problema, pero el predictor puede ser negativo si $hk>1$, y un valor positivo tampoco garantiza precisión ni validez para otros modelos.
+
+Desde la informática, una simulación útil debe alcanzar una tolerancia compatible con la decisión, con costos verificables y supuestos visibles. Conviene elegir método y paso a partir de error, evaluaciones y restricciones de no negatividad; después evaluar la calidad del modelo y de los datos. Aumentar la precisión numérica no reemplaza un inventario confiable ni una estrategia de remediación validada.
+
+\section{Conclusiones}
+El estudio relacionó derivadas y ecuaciones en diferencias mediante implementaciones genéricas de Euler y Heun. Las pruebas independientes confirmaron las recurrencias, las condiciones iniciales, el conteo y la aplicación del último paso. El crecimiento lineal se reprodujo dentro del redondeo, y en el exponencial el refinamiento redujo el error a costa de más evaluaciones.
+
+Heun presentó menor error máximo para las mallas comparadas, aunque con $h=1$ Euler tuvo menor error final. Este hallazgo responde al objetivo de comparación: la métrica y el costo deben acompañar cualquier juicio sobre precisión. Los órdenes observados apoyaron la tendencia esperada bajo las condiciones del experimento.
+
+Los modelos de vulnerabilidades mostraron el efecto de una mayor rapidez de remediación y de un flujo persistente de aparición. El equilibrio explica los niveles residuales del modelo extendido. El análisis geométrico distinguió convergencia de no negatividad: ciertas mallas estables producen estados sin sentido físico.
+
+El alcance es educativo y exploratorio. Se entregan cálculos reproducibles y documentación para estudiar sus resultados; no se estiman incidentes ni se calibran organizaciones reales. Como continuidad, se recomienda incorporar heterogeneidad, capacidad y datos operativos antes de emplear el modelo en decisiones reales.
+
+\section{Bibliografía}
+\printbibliography[heading=none]
+\end{document}
