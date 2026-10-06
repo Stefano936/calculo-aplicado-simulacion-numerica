@@ -1,9 +1,0 @@
-Autor,Título,URL,Consulta,Acceso y evidencia,Función
-Driscoll y Braun,Euler's method,https://fncbook.com/euler/,2026-10-06,Página completa consultada: fórmula error global y condiciones de convergencia,Fundamento Euler y error
-Driscoll y Braun,Runge–Kutta methods,https://fncbook.com/rk/,2026-10-06,Página consultada: dos etapas orden dos y distinción de variantes; nomenclatura difiere de la consigna,Fundamento de Heun usando la fórmula explícita exigida
-NIST,Vulnerability,https://csrc.nist.gov/glossary/term/vulnerability,2026-10-06,Glosario oficial consultado; definición y fuentes,Definición de vulnerabilidad
-Souppaya y Scarfone,Guide to Enterprise Patch Management Planning,https://csrc.nist.gov/pubs/sp/800/40/r4/final,2026-10-06,Ficha oficial y resumen consultados; abril 2022 autores y DOI verificados,Gestión de parches y consecuencias
-CVE Program,Frequently asked questions,https://www.cve.org/Resources/Media/Archives/OldWebsite/about/faqs.html,2026-10-06,FAQ oficial archivada consultada; página actual depende de JavaScript,Identificación CVE
-FIRST,CVSS v4.0 Specification Document,https://www.first.org/cvss/v4.0/specification-document,2026-10-06,Página oficial consultada; documento versión 1.2 y cuatro grupos de métricas,Severidad CVSS
-CISA,Known Exploited Vulnerabilities Catalog,https://www.cisa.gov/known-exploited-vulnerabilities-catalog,2026-10-06,Acceso directo falló; descripción oficial verificada en resultados indexados de cisa.gov; no se consultaron filas del catálogo,Explotación activa como entrada de priorización
-MITRE,Exploit Public-Facing Application T1190,https://attack.mitre.org/techniques/T1190/,2026-10-06,Página oficial consultada; versión 2.8 modificación 12 mayo 2026 y mitigaciones,Acceso inicial exposición y ejemplo defensivo

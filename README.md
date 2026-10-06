@@ -1,79 +1,94 @@
-# Simulación numérica aplicada a ciberseguridad
+# Simulación numérica de sistemas dinámicos
 
-Stefano Francolino · Cálculo Aplicado · Universidad Católica del Uruguay.
-
-Entrega: informe en LaTeX y PDF, métodos Python, notebook ejecutado, datos completos, figuras y verificaciones. Repositorio público autorizado por el usuario: [Stefano936/calculo-aplicado-simulacion-numerica](https://github.com/Stefano936/calculo-aplicado-simulacion-numerica). Se conserva también la entrega local y ZIP. Los escenarios son hipotéticos.
+Implementa Euler y el predictor-corrector con predicción Euler y promedio de
+pendientes (denominado Heun en este proyecto). Simula crecimiento lineal,
+decrecimiento exponencial, remediación de equipos vulnerables y aparición de
+equipos vulnerables. Compara errores finales y máximos, pasos y evaluaciones.
+Los escenarios son hipotéticos y utilizan unidades de tiempo genéricas.
 
 ## Instalación
 
-Python **3.12.14** fue usado para esta entrega (Python 3.12 recomendado). Desde esta carpeta:
+Se requiere Python 3.12. Se verificó con Python 3.12.14.
 
 ```console
+git clone https://github.com/Stefano936/calculo-aplicado-simulacion-numerica.git
+cd calculo-aplicado-simulacion-numerica
 python -m venv .venv
-# Windows PowerShell:
-.venv\Scripts\Activate.ps1
-# Linux/macOS: source .venv/bin/activate
+```
+
+Activación en Windows PowerShell:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+Activación en Linux o macOS:
+
+```sh
+source .venv/bin/activate
+```
+
+Instalación para experimentos y pruebas:
+
+```console
 python -m pip install -r requirements.txt
 ```
 
-LaTeX requiere TeX Live o MiKTeX con `pdflatex`, `biber`, `biblatex-apa`, `babel-spanish`, `lmodern`, `microtype`, `placeins`, `booktabs`, `longtable`, `caption`, `csquotes` y `hyperref`. No hay servicios pagos. MiKTeX puede requerir instalar paquetes faltantes; hacerlo antes de una ejecución desconectada.
+Para ejecutar y abrir el notebook, instalar además:
 
-## Reproducir todo
+```console
+python -m pip install -r requirements-notebook.txt
+```
+
+Si PowerShell impide activar el entorno, usar directamente
+`.\.venv\Scripts\python.exe` en lugar de `python` en los comandos siguientes.
+
+## Ejecución
+
+Desde la raíz del repositorio:
+
+```console
+python -m src.experimentos
+python -m unittest discover -s tests -v
+```
+
+Los experimentos generan nueve CSV en `resultados/tablas/` y nueve figuras,
+cada una en PNG de 240 dpi y PDF vectorial, en `resultados/figuras/`.
+Estas carpetas se regeneran y están excluidas de Git. Cada ejecución
+sobrescribe los resultados con los mismos nombres.
+
+Para generar resultados, ejecutar pruebas y recrear el notebook desde un kernel nuevo:
 
 ```console
 python -m src.generar_entregables
 ```
 
-Este comando genera experimentos, CSV, gráficas, recursos LaTeX, notebook desde un kernel limpio, pruebas, PDF con Biber y pasadas de referencias, auditoría y ZIP. Si falla alguna verificación detiene la entrega con un mensaje, sin inventar resultados. El ZIP aparece junto a esta carpeta y excluye entornos, auxiliares y cachés. Para regenerar sólo cálculos y recursos sin LaTeX ni notebook:
+Sin dependencias de notebook:
 
 ```console
-python -m src.generar_entregables --sin-pdf --sin-notebook
+python -m src.generar_entregables --sin-notebook
 ```
 
-## Comandos independientes
+Para abrir el notebook:
 
 ```console
-python -m src.experimentos
-python -m unittest discover -s tests -v
-python -m src.generar_entregables --solo-pdf
+python -m jupyterlab notebooks/proyecto_calculo.ipynb
 ```
 
-Recompilación manual, desde `informe/`, con los recursos ya entregados:
+Ejecutar todas las celdas en orden. El notebook importa los módulos del proyecto
+y regenera las tablas y figuras; no necesita resultados preexistentes.
 
-```console
-pdflatex -interaction=nonstopmode -halt-on-error informe.tex
-biber informe
-pdflatex -interaction=nonstopmode -halt-on-error informe.tex
-pdflatex -interaction=nonstopmode -halt-on-error informe.tex
-```
+## Organización y verificaciones
 
-Las tablas se generan desde los mismos DataFrames que los CSV. No editar a mano `informe/generados/`: cualquier cambio de parámetros debe regenerarse por Python antes de compilar.
-
-## Notebook
-
-Abrir `notebooks/proyecto_calculo.ipynb` con Jupyter, VS Code u otro lector compatible. El notebook entregado incluye salidas. Para ejecución interactiva puede instalarse opcionalmente `jupyterlab` y ejecutar `jupyter lab`. Usar un kernel del entorno anterior y **Restart Kernel and Run All**. La primera celda busca la raíz del proyecto desde la raíz o desde `notebooks/`; no hay rutas personales ni estados ocultos. La ejecución automática no necesita JupyterLab y crea una especificación de kernel temporal con el Python activo.
-
-## Organización
-
-- `src/metodos.py`: Euler y Heun escalares, genéricos y documentados.
-- `src/metricas.py`: errores y selección robusta de nodos.
-- `src/experimentos.py`: única fuente de cálculos y escenarios.
-- `src/visualizacion.py`: exportación PNG a 240 dpi y PDF vectorial.
-- `src/informe.py`: tablas automáticas, macros numéricas y compilación.
+- `src/metodos.py`: integradores escalares, validaciones y último paso ajustado.
+- `src/metricas.py`: errores, resumen y consultas de nodos tolerantes al punto flotante.
+- `src/experimentos.py`: experimentos separados y exportación de datos sin redondeo previo.
+- `src/visualizacion.py`: configuración y exportación de figuras.
 - `src/notebook.py`: creación y ejecución del notebook.
-- `src/generar_entregables.py`: proceso completo y ZIP.
-- `src/verificacion.py`: cobertura, auditoría y hashes.
-- `informe/informe.tex`, `informe.pdf`, `referencias.bib`: informe editable y final.
-- `resultados/tablas/`: tablas resumidas y trayectorias completas con 17 cifras.
-- `resultados/figuras/`: nueve figuras en PNG y PDF.
-- `tests/`: propiedades matemáticas y cobertura experimental.
-- `verificacion/`: matriz inicial/final, pruebas, compilación, revisión y manifiesto.
-- `defensa/guia_defensa.md`: preguntas y ejemplos de defensa.
+- `tests/`: fórmulas independientes, contratos, convergencia y parámetros de experimentos.
 
-## Supuestos y límites
-
-Tiempo en unidades genéricas; k en tiempo inverso; λ en equipos por unidad de tiempo. V es cantidad agregada o esperada. Tasas constantes, poblaciones hipotéticas sin calibración ni población total explícita. Para el modelo extendido se adoptó [0,20], h=.1. No se redondean ni recortan estados durante la simulación. Hay límite explícito de 10 millones de pasos y comprobación de avance temporal. Precisión numérica no implica capacidad para predecir ataques.
-
-Las fuentes web se consultaron el 6 de octubre de 2026. El acceso directo a CISA falló; su descripción oficial de KEV se contrastó mediante resultados indexados del dominio oficial, y no se usaron filas individuales del catálogo. CVE se consultó mediante su FAQ oficial archivada. La matriz y `fuentes_consultadas.csv` registran estos detalles.
-
-La revisión visual humana del PDF no se automatiza como juicio infalible: la entrega incluye un registro de inspección. Al cambiar contenido o parámetros, volver a revisar las páginas renderizadas, además de las pruebas automáticas.
+Las pruebas generan datos en una carpeta temporal, por lo que funcionan también
+en un clon sin CSV. Los valores esperados de condiciones iniciales, intervalos,
+pasos, organizaciones, tasas y tiempos se declaran independientemente del código
+de producción. La prueba con `f(t,x)=t²` diferencia el predictor-corrector del
+punto medio y comprueba el último paso ajustado. No se recortan estados negativos.

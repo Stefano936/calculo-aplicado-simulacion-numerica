@@ -1,15 +1,77 @@
 """Cobertura y consistencia de las tablas producidas por los experimentos."""
 import unittest
-from pathlib import Path
-import pandas as pd
 import numpy as np
+import tempfile
+from functools import lru_cache
+from src.experimentos import ejecutar
 
-RAIZ=Path(__file__).resolve().parents[1]
+@lru_cache(maxsize=1)
+def resultados_frescos():
+    """Genera datos nuevos sin depender de CSV ni dejar resultados locales."""
+    with tempfile.TemporaryDirectory(prefix='calculo-pruebas-') as temporal:
+        return ejecutar(temporal)
 
 
 class Cobertura(unittest.TestCase):
     def leer(self,nombre):
-        return pd.read_csv(RAIZ/'resultados/tablas'/(nombre+'.csv'),float_precision='round_trip')
+        return resultados_frescos()[nombre]
+
+    def test_parametros_obligatorios_independientes(self):
+        """Valores literales de los modelos, independientes de la configuración."""
+        df = self.leer('trayectorias')
+        esperado = {
+            'lineal': (0, 10, {('Euler', 1), ('Euler', .5), ('Euler', .1)}),
+            'exponencial': (1, 10, {('Euler', h) for h in [1, .5, .1, .05, .01]}),
+            'comparacion': (1, 10, {(m, h) for m in ['Euler', 'Heun'] for h in [1, .5, .1]}),
+            'vulnerabilidades': (1000, 20, {('Euler', h) for h in [1, .5, .1]}),
+            'extendido': (1000, 20, {('Euler', .1)}),
+            'convergencia': (1, 10, {(m, h) for m in ['Euler', 'Heun'] for h in [.2, .1, .05, .025, .0125]}),
+        }
+        self.assertEqual(set(df.modelo), set(esperado))
+        for modelo, (x0, tf, pares) in esperado.items():
+            subconjunto = df[df.modelo == modelo]
+            self.assertEqual(set(zip(subconjunto.metodo, subconjunto.h)), pares)
+            claves = ['metodo', 'h']
+            if modelo == 'vulnerabilidades':
+                claves += ['organizacion', 'k']
+                self.assertEqual(set(zip(subconjunto.organizacion, subconjunto.k)),
+                                 {('A', .1), ('B', .3), ('C', .7)})
+            if modelo == 'extendido':
+                claves += ['lambda_tasa']
+                self.assertEqual(set(subconjunto.lambda_tasa), {0, 50, 100, 200})
+                self.assertEqual(set(subconjunto.k), {.3})
+            for clave, serie in subconjunto.groupby(claves):
+                with self.subTest(modelo=modelo, parametros=clave):
+                    self.assertEqual(serie.t.iloc[0], 0)
+                    self.assertEqual(serie.t.iloc[-1], tf)
+                    self.assertEqual(serie.aproximacion.iloc[0], x0)
+                    h = clave[1]
+                    n = round(tf / h)
+                    self.assertEqual(len(serie), n+1)
+                    np.testing.assert_allclose(serie.t, np.arange(n+1)*h, atol=2e-14)
+                    if modelo == 'lineal':
+                        ref = serie.t
+                    elif modelo == 'vulnerabilidades':
+                        k = {'A': .1, 'B': .3, 'C': .7}[clave[2]]
+                        ref = 1000*np.exp(-k*serie.t)
+                        np.testing.assert_allclose(serie.aproximacion,
+                            1000*(1-h*k)**np.arange(n+1), atol=2e-11)
+                    elif modelo == 'extendido':
+                        lam = clave[2]
+                        eq = lam/.3
+                        ref = eq+(1000-eq)*np.exp(-.3*serie.t)
+                        np.testing.assert_allclose(serie.aproximacion,
+                            eq+(1000-eq)*.97**np.arange(n+1), atol=2e-11)
+                    else:
+                        ref = np.exp(-serie.t)
+                    np.testing.assert_allclose(serie.referencia, ref, atol=1e-12)
+        consultas = self.leer('vulnerabilidades')
+        self.assertEqual(set(zip(consultas.organizacion, consultas.k, consultas.h, consultas.t)),
+            {(o,k,h,t) for o,k in [('A',.1),('B',.3),('C',.7)]
+             for h in [1,.5,.1] for t in [5,10,15]})
+        for fila in consultas.itertuples():
+            self.assertAlmostEqual(fila.aproximacion,
+                1000*(1-fila.h*fila.k)**round(fila.t/fila.h), places=10)
 
     def test_combinaciones(self):
         for nombre,cantidad in [('lineal',3),('error',5),('comparacion',6),('vulnerabilidades',27),('vulnerabilidades_resumen',9),('extendido',4),('convergencia',10)]:

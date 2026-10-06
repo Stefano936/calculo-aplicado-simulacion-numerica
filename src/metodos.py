@@ -63,7 +63,7 @@ def euler(f, x0, t0, tf, h):
 
 
 def euler_mejorado(f, x0, t0, tf, h):
-    """Heun de la consigna: predictor Euler y promedio de dos pendientes.
+    """Predictor Euler y corrección mediante el promedio de dos pendientes (Heun).
 
     Usa dt real también en predictor, corrector y tiempo de segunda etapa.
     Mismas entradas, salida, validaciones y límites que euler.

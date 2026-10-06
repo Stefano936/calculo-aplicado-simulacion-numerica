@@ -1,4 +1,4 @@
-"""Exportación de figuras sin numeración duplicada: el pie está en LaTeX."""
+"""Exportación de figuras con ejes, leyendas y resolución consistente."""
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt

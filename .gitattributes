@@ -1,5 +1,2 @@
-# Conservar los bytes entregados, incluidos finales de línea y hashes.
-# Python y LaTeX aceptan LF y CRLF en Windows, Linux y macOS.
+# Evitar conversiones implícitas en los archivos reproducibles.
 * -text
-*.pdf binary
-*.png binary

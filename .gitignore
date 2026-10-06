@@ -24,4 +24,14 @@ tmp/
 *.synctex.gz
 .DS_Store
 Thumbs.db
-# Se conserva el informe PDF final y las figuras exportadas.
+
+
+# Resultados generados y documentación académica local
+resultados/
+informe/
+verificacion/
+defensa/
+*.pdf
+*.tex
+*.bib
+*.zip

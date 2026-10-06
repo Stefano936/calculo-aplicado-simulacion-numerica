@@ -34,6 +34,21 @@ def ejecutar(raiz=RAIZ):
         return t, x, dict(metodo=metodo, h=h, **parametros,
                           **resumen(t, x, n, ref, contador[0]))
 
+    _lineal(simular, datos, figuras)
+    _exponencial(simular, datos, figuras)
+    _comparacion(simular, datos, figuras)
+    _vulnerabilidades(simular, datos, figuras)
+    _extendido(simular, datos, figuras)
+    _regimenes(simular, datos, figuras)
+    _convergencia(simular, datos, figuras)
+    datos['trayectorias'] = pd.concat(trayectorias, ignore_index=True)
+    for nombre, df in datos.items():
+        df.to_csv(tablas / (nombre + '.csv'), index=False, float_format='%.17g')
+    return datos
+
+
+def _lineal(simular, datos, figuras):
+    """Genera el experimento lineal y sus salidas."""
     filas = []
     fig, ax = plt.subplots()
     ax.plot([0, 10], [0, 10], 'k--', label='Referencia x=t', zorder=5)
@@ -45,9 +60,13 @@ def ejecutar(raiz=RAIZ):
     guardar(fig, figuras, 'lineal')
     datos['lineal'] = pd.DataFrame(filas)
 
+
+
+def _exponencial(simular, datos, figuras):
+    """Genera el experimento exponencial y sus salidas."""
     filas = []
     fig, axs = plt.subplots(1, 2, figsize=(9, 3.7))
-    fe, ae = plt.subplots()
+    fe, ejes_error = plt.subplots(1, 2, figsize=(9, 3.7))
     ref = lambda t: np.exp(-t)
     for ax in axs:
         tt = np.linspace(0, 10, 2001)
@@ -56,16 +75,25 @@ def ejecutar(raiz=RAIZ):
     for h in [1, .5, .1, .05, .01]:
         t, x, fila = simular('exponencial', 'Euler', h, lambda t, x: -x, 1, 10, ref)
         filas.append(fila)
-        ae.plot(t, np.abs(ref(t) - x), label=f'h={h:g}')
+        error = np.abs(ref(t) - x)
+        ejes_error[0].plot(t, error, label=f'h={h:g}')
+        positivos = error > 0
+        ejes_error[1].semilogy(t[positivos], error[positivos], label=f'h={h:g}')
         if h != .05:
             for ax in axs:
                 ax.plot(t, x, label=f'Euler h={h:g}')
     axs[1].set_xlim(0, 2)
-    ae.set_ylabel('Error absoluto E_n')
+    for ax in ejes_error:
+        ax.set_ylabel(r'Error absoluto $E_n$')
     guardar(fig, figuras, 'exponencial')
     guardar(fe, figuras, 'errores')
     datos['error'] = pd.DataFrame(filas)
 
+
+
+def _comparacion(simular, datos, figuras):
+    """Genera el experimento comparacion y sus salidas."""
+    ref = lambda t: np.exp(-t)
     filas = []
     for metodo in METODOS:
         for h in [1, .5, .1]:
@@ -73,6 +101,10 @@ def ejecutar(raiz=RAIZ):
             filas.append(fila)
     datos['comparacion'] = pd.DataFrame(filas)
 
+
+
+def _vulnerabilidades(simular, datos, figuras):
+    """Genera el experimento vulnerabilidades y sus salidas."""
     filas, resumenes = [], []
     fg, ag = plt.subplots()
     for org, k in [('A', .1), ('B', .3), ('C', .7)]:
@@ -101,11 +133,15 @@ def ejecutar(raiz=RAIZ):
     datos['vulnerabilidades'] = pd.DataFrame(filas)
     datos['vulnerabilidades_resumen'] = pd.DataFrame(resumenes)
 
+
+
+def _extendido(simular, datos, figuras):
+    """Genera el experimento extendido y sus salidas."""
     filas = []
     fig, ax = plt.subplots()
     for lam in [0, 50, 100, 200]:
         equilibrio = lam / .3
-        # Referencia discreta independiente usada sólo en validaciones.
+        # Referencia continua complementaria; no genera los estados Euler.
         ref = lambda t, eq=equilibrio: eq + (1000-eq)*np.exp(-.3*t)
         t, x, fila = simular('extendido', 'Euler', .1,
                             lambda t, x, l=lam: l-.3*x, 1000, 20, ref,
@@ -118,6 +154,10 @@ def ejecutar(raiz=RAIZ):
     guardar(fig, figuras, 'extendido')
     datos['extendido'] = pd.DataFrame(filas)
 
+
+
+def _regimenes(simular, datos, figuras):
+    """Genera el experimento regimenes y sus salidas."""
     filas = []
     fig, ax = plt.subplots()
     for q in [.5, 1, 1.5, 2, 2.2]:
@@ -128,6 +168,10 @@ def ejecutar(raiz=RAIZ):
     guardar(fig, figuras, 'regimenes')
     datos['regimenes'] = pd.DataFrame(filas)
 
+
+
+def _convergencia(simular, datos, figuras):
+    """Genera el experimento convergencia y sus salidas."""
     filas = []
     for metodo in METODOS:
         previo = None
@@ -138,10 +182,6 @@ def ejecutar(raiz=RAIZ):
             previo = fila['error_maximo']
             filas.append(fila)
     datos['convergencia'] = pd.DataFrame(filas)
-    datos['trayectorias'] = pd.concat(trayectorias, ignore_index=True)
-    for nombre, df in datos.items():
-        df.to_csv(tablas / (nombre + '.csv'), index=False, float_format='%.17g')
-    return datos
 
 
 if __name__ == '__main__':

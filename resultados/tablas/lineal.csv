@@ -1,4 +1,0 @@
-metodo,h,pasos,puntos,valor_final,error_final,error_maximo,evaluaciones
-Euler,1,10,11,10,0,0,10
-Euler,0.5,20,21,10,0,0,20
-Euler,0.10000000000000001,100,101,10,0,0,100

@@ -6,6 +6,26 @@ from src.metricas import indice_nodo
 
 
 class Propiedades(unittest.TestCase):
+    def test_predictor_corrector_distinto_del_punto_medio(self):
+        # Oráculo racional para f=t² y nodos 0,3/10,6/10,9/10,1.
+        # El punto medio da 653/2000 al final; no comparte este oráculo.
+        t, x, n = euler_mejorado(lambda t, x: t*t, 0, 0, 1, .3)
+        esperado = [0, 27/2000, 81/1000, 513/2000, 347/1000]
+        np.testing.assert_allclose(x, esperado, rtol=0, atol=2e-15)
+        self.assertEqual(n, 4)
+        self.assertNotAlmostEqual(x[-1], 653/2000, places=10)
+
+    def test_estado_predictor_y_pendientes(self):
+        llamadas = []
+        def f(t, x):
+            llamadas.append((t, x))
+            return t - x*x
+        # Inicio (0,1), h=1/2: pendientes -1 y 1/4; predictor=1/2.
+        # Corrección: 1 + (1/4)*(-1 + 1/4) = 13/16.
+        _, x, _ = euler_mejorado(f, 1, 0, .5, .5)
+        np.testing.assert_allclose(llamadas, [(0, 1), (.5, .5)])
+        self.assertAlmostEqual(x[-1], 13/16)
+
     def test_lineal(self):
         for h in [1, .5, .1]:
             t, x, _ = euler(lambda t,x: 1, 0, 0, 10, h)
