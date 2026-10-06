@@ -149,9 +149,12 @@ def _extendido(simular, datos, figuras):
         fila.update(valor_inicial=1000, equilibrio=equilibrio,
                     distancia_equilibrio=abs(x[-1]-equilibrio))
         filas.append(fila)
-        ax.plot(t, x, label=f'λ={lam}, V*={equilibrio:.2f}')
+        trayectoria, = ax.plot(t, x, label=f'Euler, λ={lam}')
+        etiqueta_equilibrio = f'{equilibrio:.2f}'.rstrip('0').rstrip('.')
+        ax.axhline(equilibrio, color=trayectoria.get_color(), linestyle='--',
+                   label=f'V* (λ={lam}) = {etiqueta_equilibrio}')
     ax.set_ylabel('V (equipos, cantidad agregada)')
-    guardar(fig, figuras, 'extendido')
+    guardar(fig, figuras, 'extendido', leyenda_fuera=True)
     datos['extendido'] = pd.DataFrame(filas)
 
 
