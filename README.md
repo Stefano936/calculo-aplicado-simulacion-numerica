@@ -68,7 +68,11 @@ python -m src.generar_entregables
 - `tests/`: fórmulas independientes, contratos, convergencia y parámetros de experimentos.
 
 Las pruebas generan datos en una carpeta temporal, por lo que funcionan también
-en un clon sin CSV. Los valores esperados de condiciones iniciales, intervalos,
+en un clon sin CSV, y leen los archivos exportados para comprobar sus columnas
+y su correspondencia con los resultados calculados. Las trayectorias se
+contrastan con expresiones independientes de cada ecuación. También se
+comprueban referencias, errores absolutos, equilibrios, distancias al equilibrio,
+regímenes discretos y órdenes observados. Los valores esperados de condiciones iniciales, intervalos,
 pasos, organizaciones, tasas y tiempos se declaran independientemente del código
 de producción. La prueba con `f(t,x)=t²` diferencia el predictor-corrector del
 punto medio y comprueba el último paso ajustado. No se recortan estados negativos.

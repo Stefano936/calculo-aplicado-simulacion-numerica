@@ -2,6 +2,8 @@
 import unittest
 import numpy as np
 import tempfile
+from pathlib import Path
+import pandas as pd
 from functools import lru_cache
 from src.experimentos import ejecutar
 
@@ -9,7 +11,15 @@ from src.experimentos import ejecutar
 def resultados_frescos():
     """Genera datos nuevos sin depender de CSV ni dejar resultados locales."""
     with tempfile.TemporaryDirectory(prefix='calculo-pruebas-') as temporal:
-        return ejecutar(temporal)
+        datos = ejecutar(temporal)
+        exportados = {}
+        for nombre, esperado in datos.items():
+            exportados[nombre] = pd.read_csv(
+                Path(temporal)/'resultados/tablas'/f'{nombre}.csv',
+                float_precision='round_trip')
+            pd.testing.assert_frame_equal(exportados[nombre], esperado,
+                                          check_dtype=False, check_exact=True)
+        return exportados
 
 
 class Cobertura(unittest.TestCase):
@@ -51,6 +61,8 @@ class Cobertura(unittest.TestCase):
                     np.testing.assert_allclose(serie.t, np.arange(n+1)*h, atol=2e-14)
                     if modelo == 'lineal':
                         ref = serie.t
+                        np.testing.assert_allclose(serie.aproximacion, serie.t,
+                                                   rtol=0, atol=2e-13)
                     elif modelo == 'vulnerabilidades':
                         k = {'A': .1, 'B': .3, 'C': .7}[clave[2]]
                         ref = 1000*np.exp(-k*serie.t)
@@ -64,6 +76,9 @@ class Cobertura(unittest.TestCase):
                             eq+(1000-eq)*.97**np.arange(n+1), atol=2e-11)
                     else:
                         ref = np.exp(-serie.t)
+                        factor = 1-h if clave[0] == 'Euler' else 1-h+h*h/2
+                        np.testing.assert_allclose(serie.aproximacion,
+                            factor**np.arange(n+1), rtol=1e-12, atol=1e-13)
                     np.testing.assert_allclose(serie.referencia, ref, atol=1e-12)
         consultas = self.leer('vulnerabilidades')
         self.assertEqual(set(zip(consultas.organizacion, consultas.k, consultas.h, consultas.t)),
@@ -79,6 +94,71 @@ class Cobertura(unittest.TestCase):
         df=self.leer('vulnerabilidades')
         esperado={(o,h,t) for o in 'ABC' for h in [1,.5,.1] for t in [5,10,15]}
         self.assertEqual(set(zip(df.organizacion,df.h,df.t)),esperado)
+
+    def test_columnas_y_etiquetas_exportadas(self):
+        """El contrato CSV se declara con nombres independientes del exportador."""
+        resumen = ['metodo', 'h', 'pasos', 'puntos', 'valor_final',
+                   'error_final', 'error_maximo', 'evaluaciones']
+        esperadas = {
+            'lineal': resumen, 'error': resumen, 'comparacion': resumen,
+            'convergencia': resumen+['orden_observado'],
+            'vulnerabilidades_resumen': ['metodo','h','organizacion','k']+resumen[2:],
+            'vulnerabilidades': ['organizacion','k','h','t','aproximacion',
+                                 'referencia','error_absoluto'],
+            'extendido': ['metodo','h','lambda_tasa','k']+resumen[2:]+
+                        ['valor_inicial','equilibrio','distancia_equilibrio'],
+            'regimenes': ['hk','n','valor'],
+            'trayectorias': ['t','aproximacion','referencia','diferencia_con_signo',
+                            'error_absoluto','modelo','metodo','h',
+                            'organizacion','k','lambda_tasa'],
+        }
+        self.assertEqual(set(resultados_frescos()), set(esperadas))
+        for nombre, columnas in esperadas.items():
+            with self.subTest(tabla=nombre):
+                self.assertEqual(list(self.leer(nombre).columns), columnas)
+
+    def test_observaciones_vulnerabilidades_independientes(self):
+        df = self.leer('vulnerabilidades')
+        referencias = np.array([1000*np.exp(-{'A':.1,'B':.3,'C':.7}[f.organizacion]*f.t)
+                                for f in df.itertuples()])
+        np.testing.assert_allclose(df.referencia, referencias, rtol=0, atol=1e-11)
+        np.testing.assert_allclose(df.error_absoluto,
+            np.abs(df.aproximacion-referencias), rtol=0, atol=1e-11)
+
+    def test_equilibrios_y_distancias_independientes(self):
+        df = self.leer('extendido').set_index('lambda_tasa')
+        self.assertEqual(set(df.index), {0,50,100,200})
+        for lam in [0,50,100,200]:
+            fila = df.loc[lam]
+            equilibrio = lam/.3
+            final = equilibrio+(1000-equilibrio)*.97**200
+            self.assertAlmostEqual(fila.equilibrio, equilibrio, places=11)
+            self.assertAlmostEqual(fila.valor_final, final, places=10)
+            self.assertAlmostEqual(fila.distancia_equilibrio,
+                                   abs(final-equilibrio), places=10)
+
+    def test_regimenes_independientes(self):
+        df = self.leer('regimenes')
+        self.assertEqual(set(zip(df.hk, df.n)),
+                         {(q,n) for q in [.5,1,1.5,2,2.2] for n in range(11)})
+        for q in [.5,1,1.5,2,2.2]:
+            serie = df[df.hk == q]
+            np.testing.assert_array_equal(serie.n, np.arange(11))
+            np.testing.assert_allclose(serie.valor, (1-q)**np.arange(11),
+                                       rtol=1e-12, atol=1e-13)
+
+    def test_orden_observado_independiente(self):
+        for metodo in ['Euler','Heun']:
+            serie = self.leer('convergencia').query('metodo == @metodo')
+            errores = []
+            for h in [.2,.1,.05,.025,.0125]:
+                n = np.arange(round(10/h)+1)
+                factor = 1-h if metodo == 'Euler' else 1-h+h*h/2
+                errores.append(np.max(np.abs(np.exp(-n*h)-factor**n)))
+            esperados = np.log2(np.array(errores[:-1])/errores[1:])
+            self.assertTrue(np.isnan(serie.orden_observado.iloc[0]))
+            np.testing.assert_allclose(serie.orden_observado.iloc[1:], esperados,
+                                       rtol=1e-9, atol=1e-10)
 
     def test_metricas_trayectorias(self):
         df=self.leer('trayectorias')
