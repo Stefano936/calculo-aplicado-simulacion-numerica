@@ -65,6 +65,39 @@ class Propiedades(unittest.TestCase):
                 self.assertEqual(x[0],x0)
                 self.assertTrue(np.all(np.diff(t)>0))
 
+    def test_cociente_temporal_subdesbordado(self):
+        for metodo, evaluaciones in [(euler, 1), (euler_mejorado, 2)]:
+            with self.subTest(metodo=metodo.__name__):
+                llamadas = []
+                def f(t, x):
+                    llamadas.append((t, x))
+                    return 1
+                t0, tf = 0, 1e-320
+                t, x, n = metodo(f, 7, t0, tf, 1e100)
+                self.assertEqual(n, 1)
+                self.assertEqual(len(t), 2)
+                self.assertEqual(len(x), 2)
+                self.assertEqual(t[0], t0)
+                self.assertEqual(t[-1], tf)
+                self.assertTrue(np.all(np.diff(t) > 0))
+                self.assertEqual(x[0], 7)
+                self.assertEqual(len(llamadas), evaluaciones)
+
+    def test_intervalo_nulo_sin_evaluaciones(self):
+        for metodo in [euler, euler_mejorado]:
+            with self.subTest(metodo=metodo.__name__):
+                llamadas = []
+                def f(t, x):
+                    llamadas.append((t, x))
+                    return 1
+                t, x, n = metodo(f, 7, 0, 0, 1e100)
+                self.assertEqual(n, 0)
+                self.assertEqual(len(t), 1)
+                self.assertEqual(len(x), 1)
+                self.assertEqual(t[0], 0)
+                self.assertEqual(x[0], 7)
+                self.assertEqual(llamadas, [])
+
     def test_invalidos(self):
         for metodo in [euler,euler_mejorado]:
             for args in [(0,0,1,0),(0,0,1,-1),(0,2,1,.1),

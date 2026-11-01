@@ -31,7 +31,7 @@ def _integrar(f, x0, t0, tf, h, mejorado):
     if entero >= 1 and abs(cociente - entero) <= 8 * math.ulp(cociente):
         n = entero
     else:
-        n = math.ceil(cociente)
+        n = max(1, math.ceil(cociente))
     t = t0 + h * np.arange(n + 1, dtype=float)
     t[-1] = tf
     if np.any(np.diff(t) <= 0):
